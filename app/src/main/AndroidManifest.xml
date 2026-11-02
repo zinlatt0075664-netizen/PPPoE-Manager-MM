@@ -4,6 +4,7 @@
     <application
         android:allowBackup="false"
         android:label="PPPoE Manager MM"
+        android:icon="@drawable/app_logo"
         android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity
