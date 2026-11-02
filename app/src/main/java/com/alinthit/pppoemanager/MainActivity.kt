@@ -258,11 +258,11 @@ private object RouterApi {
             val input = BufferedInputStream(socket.getInputStream()); val output = BufferedOutputStream(socket.getOutputStream())
             send(output, listOf("/login", "=name=$username", "=password=$password"))
             var ok = false
-            repeat(10) {
+            var attempts = 0
+            while (!ok && attempts++ < 10) {
                 val s = read(input)
                 if (s.any { it.startsWith("!trap") }) error(s.joinToString(" "))
                 if (s.any { it == "!done" }) ok = true
-                if (ok) return@repeat
             }
             if (!ok) error("API login မအောင်မြင်ပါ")
             send(output, command)
@@ -297,6 +297,7 @@ private object RouterApi {
     }
     fun addSecret(h:String,p:Int,u:String,pw:String,name:String,secret:String,profile:String): Result<Unit> = runCatching {
         call(h,p,u,pw,listOf("/ppp/secret/add","=name=$name","=password=$secret","=service=pppoe","=profile=$profile"))
+        Unit
     }
     private fun prettyBytes(s:String):String = s.toLongOrNull()?.let { n ->
         when { n >= 1073741824 -> "%.2f GB".format(n/1073741824.0); n >= 1048576 -> "%.1f MB".format(n/1048576.0); n >= 1024 -> "%.1f KB".format(n/1024.0); else -> "$n B" }
