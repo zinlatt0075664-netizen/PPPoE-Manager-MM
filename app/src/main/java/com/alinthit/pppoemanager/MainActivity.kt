@@ -138,13 +138,11 @@ private object RouterApi {
             val output = BufferedOutputStream(socket.getOutputStream())
             sendSentence(output, listOf("/login", "=name=$username", "=password=$password"))
             var loggedIn = false
-            repeat(20) {
+            while (!loggedIn) {
                 val sentence = readSentence(input)
                 if (sentence.any { it.startsWith("!trap") }) error("Login ငြင်းပယ်ခံရသည်")
                 if (sentence.any { it == "!done" }) loggedIn = true
-                if (loggedIn) return@repeat
             }
-            if (!loggedIn) error("Login အဖြေမရပါ")
             sendSentence(output, listOf("/system/identity/print"))
             repeat(20) {
                 val sentence = readSentence(input)
